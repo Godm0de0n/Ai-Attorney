@@ -22,7 +22,7 @@ import {
   FileText,
   Gavel,
   MapPin,
-  UserCircle,
+  // UserCircle, // Can be removed if not used directly
   Scale,
   Settings,
   LogOut,
@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { AIImage } from "../ui/AIImage"; // For user avatar potentially
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -45,7 +46,12 @@ const navItems = [
   { href: "/lawyer-locator", label: "Lawyer Locator", icon: MapPin },
 ];
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+interface AppShellProps {
+  children: React.ReactNode;
+  onLogout?: () => void; // Added onLogout prop
+}
+
+export function AppShell({ children, onLogout }: AppShellProps) {
   const pathname = usePathname();
   const { open, setOpen, isMobile } = useSidebar();
 
@@ -92,7 +98,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </SidebarMenu>
           </SidebarContent>
         </ScrollArea>
-        {/* User profile button fixed at the bottom of the sidebar */}
         <div className={cn(
             "p-2 mt-auto sticky bottom-0 bg-sidebar",
             "group-data-[collapsible=icon]/sidebar-wrapper:py-2 group-data-[collapsible=icon]/sidebar-wrapper:px-[calc(theme(spacing.2)_-_1px)]"
@@ -104,7 +109,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   "group-data-[collapsible=icon]/sidebar-wrapper:justify-center group-data-[collapsible=icon]/sidebar-wrapper:w-8 group-data-[collapsible=icon]/sidebar-wrapper:h-8"
                 )}>
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src="https://placehold.co/40x40.png" alt="User" data-ai-hint="person avatar" />
+                    {/* Consider using AIImage for avatar if dynamic, or keep placeholder */}
+                    <AvatarImage src="https://placehold.co/40x40.png" alt="User" data-ai-hint="user avatar professional" />
                     <AvatarFallback>U</AvatarFallback>
                   </Avatar>
                   <span className={cn(
@@ -121,10 +127,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Settings</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
+                {onLogout && (
+                  <DropdownMenuItem onClick={onLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
         </div>

@@ -1,7 +1,8 @@
+
 "use client";
 
-import { useState, type FormEvent } from 'react';
-import Image from 'next/image';
+import { useState, type FormEvent, useEffect } from 'react';
+// Removed Image from 'next/image' as AIImage will be used
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Loader2, MapPin, Search, UserCheck, Phone, Mail, Star, Building, Briefcase } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { AIImage } from '@/components/ui/AIImage'; // New Import
 
 interface Lawyer {
   id: string;
@@ -18,21 +20,29 @@ interface Lawyer {
   location: string;
   phone: string;
   email: string;
-  imageUrl: string;
+  imageUrl?: string; // Made optional, AIImage will handle placeholder
   rating: number;
   firm?: string;
   experience?: number;
-  dataAiHint?: string;
+  dataAiHint: string; // Ensure this is always present for AIImage
 }
 
 // Placeholder data - in a real app, this would come from a database/API
 const allLawyers: Lawyer[] = [
-  { id: '1', name: 'Adv. Priya Sharma', specialization: 'Criminal Law', location: 'Delhi, India', phone: '+91 98765 43210', email: 'priya.sharma@example.com', imageUrl: 'https://placehold.co/120x120.png', rating: 4.8, firm: "Sharma & Associates", experience: 12, dataAiHint: "woman lawyer" },
-  { id: '2', name: 'Adv. Rohan Mehta', specialization: 'Corporate Law', location: 'Mumbai, India', phone: '+91 91234 56789', email: 'rohan.mehta@example.com', imageUrl: 'https://placehold.co/120x120.png', rating: 4.5, firm: "Mehta Legal Solutions", experience: 8, dataAiHint: "man lawyer" },
-  { id: '3', name: 'Adv. Anjali Singh', specialization: 'Family Law', location: 'Bangalore, India', phone: '+91 87654 32109', email: 'anjali.singh@example.com', imageUrl: 'https://placehold.co/120x120.png', rating: 4.7, firm: "Singh & Partners", experience: 10, dataAiHint: "female attorney" },
-  { id: '4', name: 'Adv. Vikram Rao', specialization: 'Property Law', location: 'Chennai, India', phone: '+91 70123 45678', email: 'vikram.rao@example.com', imageUrl: 'https://placehold.co/120x120.png', rating: 4.6, firm: "Rao Property Chambers", experience: 15, dataAiHint: "male lawyer" },
-  { id: '5', name: 'Adv. Sunita Reddy', specialization: 'Cyber Law', location: 'Hyderabad, India', phone: '+91 63098 76543', email: 'sunita.reddy@example.com', imageUrl: 'https://placehold.co/120x120.png', rating: 4.9, firm: "Reddy Tech Legal", experience: 7, dataAiHint: "woman indian" },
-  { id: '6', name: 'Adv. Alok Verma', specialization: 'Civil Law', location: 'Kolkata, India', phone: '+91 88877 55544', email: 'alok.verma@example.com', imageUrl: 'https://placehold.co/120x120.png', rating: 4.3, firm: "Verma Civil Litigators", experience: 9, dataAiHint: "man suit" },
+  { id: '1', name: 'Adv. Priya Sharma', specialization: 'Criminal Law', location: 'Delhi, India', phone: '+91 98765 43210', email: 'priya.sharma@example.com', rating: 4.8, firm: "Sharma & Associates", experience: 12, dataAiHint: "professional indian woman lawyer portrait" },
+  { id: '2', name: 'Adv. Rohan Mehta', specialization: 'Corporate Law', location: 'Mumbai, India', phone: '+91 91234 56789', email: 'rohan.mehta@example.com', rating: 4.5, firm: "Mehta Legal Solutions", experience: 8, dataAiHint: "professional indian man lawyer portrait" },
+  { id: '3', name: 'Adv. Anjali Singh', specialization: 'Family Law', location: 'Bangalore, India', phone: '+91 87654 32109', email: 'anjali.singh@example.com', rating: 4.7, firm: "Singh & Partners", experience: 10, dataAiHint: "elegant indian female attorney" },
+  { id: '4', name: 'Adv. Vikram Rao', specialization: 'Property Law', location: 'Chennai, India', phone: '+91 70123 45678', email: 'vikram.rao@example.com', rating: 4.6, firm: "Rao Property Chambers", experience: 15, dataAiHint: "experienced male lawyer india" },
+  { id: '5', name: 'Adv. Sunita Reddy', specialization: 'Cyber Law', location: 'Hyderabad, India', phone: '+91 63098 76543', email: 'sunita.reddy@example.com', rating: 4.9, firm: "Reddy Tech Legal", experience: 7, dataAiHint: "modern indian woman tech lawyer" },
+  { id: '6', name: 'Adv. Alok Verma', specialization: 'Civil Law', location: 'Kolkata, India', phone: '+91 88877 55544', email: 'alok.verma@example.com', rating: 4.3, firm: "Verma Civil Litigators", experience: 9, dataAiHint: "indian man lawyer in suit" },
+  // New Lawyers
+  { id: '7', name: 'Adv. Sneha Das', specialization: 'Intellectual Property', location: 'Kolkata, India', phone: '+91 99887 76655', email: 'sneha.das@example.com', rating: 4.6, firm: "Das IP Experts", experience: 8, dataAiHint: "creative indian woman lawyer" },
+  { id: '8', name: 'Adv. Arjun Kapoor', specialization: 'Tax Law', location: 'Mumbai, India', phone: '+91 77665 54433', email: 'arjun.kapoor@example.com', rating: 4.4, firm: "Kapoor Tax Advisors", experience: 11, dataAiHint: "sharp indian man tax lawyer" },
+  { id: '9', name: 'Adv. Meera Iyer', specialization: 'Labor Law', location: 'Delhi, India', phone: '+91 66554 43322', email: 'meera.iyer@example.com', rating: 4.7, firm: "Iyer Employment Law", experience: 9, dataAiHint: "confident south indian woman lawyer" },
+  { id: '10', name: 'Adv. Rahul Nair', specialization: 'Criminal Law', location: 'Hyderabad, India', phone: '+91 55443 32211', email: 'rahul.nair@example.com', rating: 4.5, firm: "Nair Defense Firm", experience: 10, dataAiHint: "serious indian man criminal lawyer" },
+  { id: '11', name: 'Adv. Diya Reddy', specialization: 'Corporate Law', location: 'Bangalore, India', phone: '+91 44332 21100', email: 'diya.reddy@example.com', rating: 4.8, firm: "Reddy Corp Legal", experience: 13, dataAiHint: "professional young indian woman corporate lawyer" },
+  { id: '12', name: 'Adv. Karan Joshi', specialization: 'Property Law', location: 'Pune, India', phone: '+91 33221 10099', email: 'karan.joshi@example.com', rating: 4.6, firm: "Joshi Real Estate Law", experience: 14, dataAiHint: "smart indian man property lawyer" },
+  { id: '13', name: 'Adv. Fatima Khan', specialization: 'Family Law', location: 'Pune, India', phone: '+91 22110 09988', email: 'fatima.khan@example.com', rating: 4.9, firm: "Khan Family Advocates", experience: 7, dataAiHint: "empathetic indian woman family lawyer" },
 ];
 
 const legalSpecializations = [
@@ -57,7 +67,7 @@ export default function LawyerLocatorPage() {
     setFoundLawyers(null);
 
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Reduced delay
 
     let results = allLawyers;
     if (location.trim()) {
@@ -143,8 +153,16 @@ export default function LawyerLocatorPage() {
               {foundLawyers.map(lawyer => (
                 <Card key={lawyer.id} className="shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col">
                   <CardHeader className="flex flex-row items-start gap-4 pb-4">
-                    <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-primary">
-                       <Image src={lawyer.imageUrl} alt={lawyer.name} layout="fill" objectFit="cover" data-ai-hint={lawyer.dataAiHint || "person professional"} />
+                    <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-primary shrink-0">
+                       <AIImage 
+                         prompt={lawyer.dataAiHint} 
+                         alt={lawyer.name} 
+                         width={96} 
+                         height={96}
+                         layout="fill"
+                         objectFit="cover"
+                         fallbackSrc={lawyer.imageUrl || `https://placehold.co/120x120.png`}
+                       />
                     </div>
                     <div className="flex-1">
                       <CardTitle className="text-xl text-primary">{lawyer.name}</CardTitle>
@@ -198,3 +216,4 @@ export default function LawyerLocatorPage() {
     </div>
   );
 }
+

@@ -1,10 +1,12 @@
+
 "use client";
 
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Gavel, MapPin, ArrowRight } from "lucide-react";
-import Image from "next/image";
+// Removed Image from 'next/image'
+import { AIImage } from '@/components/ui/AIImage'; // New Import
 
 const featureCards = [
   {
@@ -12,27 +14,27 @@ const featureCards = [
     description: "Upload legal documents for AI-powered summaries and suggested next steps.",
     href: "/document-insight",
     icon: FileText,
-    imgSrc: "https://placehold.co/600x400.png",
+    imgSrc: "https://placehold.co/600x400.png", // Fallback
     imgAlt: "Document analysis illustration",
-    dataAiHint: "document legal"
+    dataAiHint: "abstract legal document analysis concept" 
   },
   {
     title: "Legal Guidance",
     description: "Describe your situation to receive legal advice and relevant IPC sections.",
     href: "/legal-guidance",
     icon: Gavel,
-    imgSrc: "https://placehold.co/600x400.png",
+    imgSrc: "https://placehold.co/600x400.png", // Fallback
     imgAlt: "Legal hammer and book illustration",
-    dataAiHint: "law justice"
+    dataAiHint: "gavel justice balance scales concept art"
   },
   {
     title: "Lawyer Locator",
     description: "Find and connect with lawyers in your area based on your legal needs.",
     href: "/lawyer-locator",
     icon: MapPin,
-    imgSrc: "https://placehold.co/600x400.png",
+    imgSrc: "https://placehold.co/600x400.png", // Fallback
     imgAlt: "Map and location pin illustration",
-    dataAiHint: "map location"
+    dataAiHint: "map with location pins diverse people"
   },
 ];
 
@@ -51,12 +53,15 @@ export default function DashboardPage() {
           {featureCards.map((feature) => (
             <Card key={feature.title} className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
               <div className="relative h-48 w-full">
-                <Image
-                  src={feature.imgSrc}
+                <AIImage
+                  prompt={feature.dataAiHint}
                   alt={feature.imgAlt}
+                  width={600} 
+                  height={400}
                   layout="fill"
                   objectFit="cover"
-                  data-ai-hint={feature.dataAiHint}
+                  fallbackSrc={feature.imgSrc}
+                  className="bg-muted"
                 />
               </div>
               <CardHeader>
