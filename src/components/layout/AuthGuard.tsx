@@ -2,7 +2,7 @@
 "use client";
 
 import { useAuth } from '@/hooks/useAuth';
-import { usePathname, useRouter } from 'next/navigation'; // Corrected import
+import { usePathname, useRouter } from 'next/navigation'; 
 import { useEffect, useState, type ReactNode } from 'react';
 import { Loader2 } from 'lucide-react';
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -45,7 +45,8 @@ export function AuthGuard({ children }: { children: ReactNode }) {
 
   // If on the login page
   if (pathname === '/login') {
-    // If logged in, redirect is happening, show loader. Otherwise, show login page content.
+    // If logged in, redirect is happening (or about to be triggered by useEffect), show loader.
+    // Otherwise (not logged in), show login page content (children).
     return isLoggedIn ? (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -53,9 +54,9 @@ export function AuthGuard({ children }: { children: ReactNode }) {
     ) : <>{children}</>;
   }
 
-  // For protected routes
+  // For protected routes:
+  // If not logged in, redirect is in progress (or about to be triggered by useEffect), show loader.
   if (!isLoggedIn) {
-    // Not logged in, redirect is in progress (or about to be triggered by useEffect), show loader.
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />

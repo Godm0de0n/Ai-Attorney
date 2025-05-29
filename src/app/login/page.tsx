@@ -7,8 +7,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from '@/hooks/useAuth';
-import { Loader2, LogIn, Scale } from 'lucide-react';
-import { useRouter } from 'next/navigation'; // Corrected import for App Router
+import { Loader2, LogIn, Scale, UserPlus } from 'lucide-react';
+import { useRouter } from 'next/navigation'; 
+import Link from 'next/link';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -18,10 +19,20 @@ export default function LoginPage() {
   const router = useRouter();
 
   // Redirect if already logged in
+  useEffect(() => {
+    if (isLoggedIn === true) {
+      router.replace('/');
+    }
+  }, [isLoggedIn, router]);
+
   if (isLoggedIn === true) {
-    router.replace('/');
-    return null; // Render nothing while redirecting
+    return ( // Show loader while redirecting
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
   }
+  
   if (isLoggedIn === undefined) { // Still checking auth status
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
@@ -35,12 +46,12 @@ export default function LoginPage() {
     event.preventDefault();
     setIsLoading(true);
     
-    const success = login(username, password); // login handles toast internally
+    const success = login(username, password); // login handles toast and redirect internally
     
     if (!success) {
       setIsLoading(false);
     }
-    // On success, useAuth hook handles redirect and toast
+    // On success, useAuth hook handles redirect
   };
 
   return (
@@ -90,6 +101,13 @@ export default function LoginPage() {
                   <LogIn className="mr-2 h-5 w-5" /> Login
                 </>
               )}
+            </Button>
+            <Button variant="link" className="text-muted-foreground hover:text-primary" asChild>
+              {/* For now, this link won't go anywhere functional, but it sets up the UI element */}
+              {/* In a real app, this would link to a /register page or similar */}
+              <Link href="#"> 
+                <UserPlus className="mr-2 h-4 w-4" /> Create an account
+              </Link>
             </Button>
             <p className="text-xs text-muted-foreground">Use <code className="font-semibold text-primary/80">admin</code> / <code className="font-semibold text-primary/80">password</code> for demo.</p>
           </CardFooter>
