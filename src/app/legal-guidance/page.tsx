@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, type FormEvent } from 'react';
@@ -136,9 +137,9 @@ export default function LegalGuidancePage() {
 
             <div>
               <h3 className="text-xl font-semibold mb-2 text-accent">Incorporated Details Decision</h3>
-              <p className="text-foreground/90">
+              <div className="text-foreground/90">
                 Specific details incorporated based on precedents: <Badge variant={guidanceResult.shouldIncorporateDetails ? "default" : "outline"}>{guidanceResult.shouldIncorporateDetails ? "Yes" : "No"}</Badge>
-              </p>
+              </div>
             </div>
           </CardContent>
         </Card>
