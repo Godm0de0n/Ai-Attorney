@@ -2,11 +2,11 @@
 "use client";
 
 import Link from 'next/link';
+import NextImage from 'next/image'; // Import NextImage for static placeholders
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Gavel, MapPin, ArrowRight } from "lucide-react";
-// Removed Image from 'next/image'
-import { AIImage } from '@/components/ui/AIImage'; // New Import
+import { AIImage } from '@/components/ui/AIImage';
 
 const featureCards = [
   {
@@ -14,27 +14,30 @@ const featureCards = [
     description: "Upload legal documents for AI-powered summaries and suggested next steps.",
     href: "/document-insight",
     icon: FileText,
-    imgSrc: "https://placehold.co/600x400.png", // Fallback
+    imgSrc: "https://placehold.co/600x400.png", 
     imgAlt: "Document analysis illustration",
-    dataAiHint: "abstract legal document analysis concept" 
+    dataAiHint: "abstract legal document analysis concept",
+    useAIImage: true, // Flag to use AIImage for this card
   },
   {
     title: "Legal Guidance",
     description: "Describe your situation to receive legal advice and relevant IPC sections.",
     href: "/legal-guidance",
     icon: Gavel,
-    imgSrc: "https://placehold.co/600x400.png", // Fallback
+    imgSrc: "https://placehold.co/600x400.png", 
     imgAlt: "Legal hammer and book illustration",
-    dataAiHint: "gavel justice balance scales concept art"
+    dataAiHint: "gavel justice balance scales concept art",
+    useAIImage: false, // Use static image for this card
   },
   {
     title: "Lawyer Locator",
     description: "Find and connect with lawyers in your area based on your legal needs.",
     href: "/lawyer-locator",
     icon: MapPin,
-    imgSrc: "https://placehold.co/600x400.png", // Fallback
+    imgSrc: "https://placehold.co/600x400.png", 
     imgAlt: "Map and location pin illustration",
-    dataAiHint: "map with location pins diverse people"
+    dataAiHint: "map with location pins diverse people",
+    useAIImage: false, // Use static image for this card
   },
 ];
 
@@ -53,16 +56,28 @@ export default function DashboardPage() {
           {featureCards.map((feature) => (
             <Card key={feature.title} className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
               <div className="relative h-48 w-full">
-                <AIImage
-                  prompt={feature.dataAiHint}
-                  alt={feature.imgAlt}
-                  width={600} 
-                  height={400}
-                  layout="fill"
-                  objectFit="cover"
-                  fallbackSrc={feature.imgSrc}
-                  className="bg-muted"
-                />
+                {feature.useAIImage ? (
+                  <AIImage
+                    prompt={feature.dataAiHint}
+                    alt={feature.imgAlt}
+                    width={600} 
+                    height={400}
+                    layout="fill"
+                    objectFit="cover"
+                    fallbackSrc={feature.imgSrc} // AIImage handles its own fallback
+                    className="bg-muted"
+                  />
+                ) : (
+                  <NextImage
+                    src={feature.imgSrc} // Directly use placeholder
+                    alt={feature.imgAlt}
+                    layout="fill"
+                    objectFit="cover"
+                    className="bg-muted"
+                    data-ai-hint={feature.dataAiHint} // Keep hint for potential future use
+                    unoptimized // Placeholders don't need optimization
+                  />
+                )}
               </div>
               <CardHeader>
                 <div className="flex items-center gap-3 mb-2">
