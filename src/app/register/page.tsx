@@ -7,18 +7,20 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from '@/hooks/useAuth';
-import { Loader2, LogIn, Scale, UserPlus } from 'lucide-react';
+import { Loader2, UserPlus, Scale, LogIn } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useToast } from '@/hooks/use-toast';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { login, isLoggedIn } = useAuth();
+  const { register, isLoggedIn } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
 
-  // Redirect if already logged in
   useEffect(() => {
     if (isLoggedIn === true) {
       router.replace('/');
@@ -26,14 +28,14 @@ export default function LoginPage() {
   }, [isLoggedIn, router]);
 
   if (isLoggedIn === true) {
-    return ( // Show loader while redirecting
+    return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
   }
-  
-  if (isLoggedIn === undefined) { // Still checking auth status
+
+  if (isLoggedIn === undefined) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -43,14 +45,24 @@ export default function LoginPage() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (password !== confirmPassword) {
+      toast({ variant: "destructive", title: "Registration Failed", description: "Passwords do not match." });
+      return;
+    }
+    if (!username.trim() || !password.trim()) {
+      toast({ variant: "destructive", title: "Registration Failed", description: "Username and password cannot be empty." });
+      return;
+    }
+
     setIsLoading(true);
     
-    const success = login(username, password);
+    const success = await register(username, password); // Assuming register might be async
     
     if (!success) {
-      setIsLoading(false);
+      setIsLoading(false); 
+      // Toast for failure is handled within the register function in useAuth
     }
-    // On success, useAuth hook handles redirect
+    // On success, useAuth hook handles redirect via login
   };
 
   return (
@@ -58,8 +70,8 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="text-center space-y-2">
           <Scale className="w-16 h-16 text-primary mx-auto" />
-          <CardTitle className="text-3xl font-bold text-primary">AI-Attorney Login</CardTitle>
-          <CardDescription>Access your AI-powered legal assistant.</CardDescription>
+          <CardTitle className="text-3xl font-bold text-primary">Create Account</CardTitle>
+          <CardDescription>Join AI-Attorney to get started.</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-6">
@@ -68,7 +80,7 @@ export default function LoginPage() {
               <Input
                 id="username"
                 type="text"
-                placeholder="admin or your username"
+                placeholder="Choose a username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
@@ -80,9 +92,21 @@ export default function LoginPage() {
               <Input
                 id="password"
                 type="password"
-                placeholder="password"
+                placeholder="Create a password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirm-password">Confirm Password</Label>
+              <Input
+                id="confirm-password"
+                type="password"
+                placeholder="Confirm your password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 className="text-base"
               />
@@ -93,20 +117,19 @@ export default function LoginPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Logging in...
+                  Creating Account...
                 </>
               ) : (
                 <>
-                  <LogIn className="mr-2 h-5 w-5" /> Login
+                  <UserPlus className="mr-2 h-5 w-5" /> Create Account
                 </>
               )}
             </Button>
             <Button variant="link" className="text-muted-foreground hover:text-primary" asChild>
-              <Link href="/register"> 
-                <UserPlus className="mr-2 h-4 w-4" /> Create an account
+              <Link href="/login">
+                <LogIn className="mr-2 h-4 w-4" /> Already have an account? Login
               </Link>
             </Button>
-            <p className="text-xs text-muted-foreground">Use <code className="font-semibold text-primary/80">admin</code> / <code className="font-semibold text-primary/80">password</code> for demo.</p>
           </CardFooter>
         </form>
       </Card>
