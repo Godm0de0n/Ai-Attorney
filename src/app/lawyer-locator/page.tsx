@@ -116,7 +116,7 @@ export default function LawyerLocatorPage() {
 
     let results = allLawyers;
     if (location.trim()) {
-      constsearchTerm = location.toLowerCase();
+      const searchTerm = location.toLowerCase();
       results = results.filter(lawyer => 
         lawyer.location.toLowerCase().includes(searchTerm) || 
         lawyer.name.toLowerCase().includes(searchTerm) // Allow searching by name too
