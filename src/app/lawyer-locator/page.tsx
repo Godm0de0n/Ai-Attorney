@@ -20,22 +20,21 @@ interface Lawyer {
   location: string;
   phone: string;
   email: string;
-  imageUrl?: string; // Made optional, AIImage will handle placeholder
+  imageUrl?: string; 
   rating: number;
   firm?: string;
   experience?: number;
-  dataAiHint: string; // Ensure this is always present for AIImage
+  dataAiHint: string; 
 }
 
-// Placeholder data - in a real app, this would come from a database/API
-const allLawyers: Lawyer[] = [
+// Existing lawyers
+const existingLawyers: Lawyer[] = [
   { id: '1', name: 'Adv. Priya Sharma', specialization: 'Criminal Law', location: 'Delhi, India', phone: '+91 98765 43210', email: 'priya.sharma@example.com', rating: 4.8, firm: "Sharma & Associates", experience: 12, dataAiHint: "professional indian woman lawyer portrait" },
   { id: '2', name: 'Adv. Rohan Mehta', specialization: 'Corporate Law', location: 'Mumbai, India', phone: '+91 91234 56789', email: 'rohan.mehta@example.com', rating: 4.5, firm: "Mehta Legal Solutions", experience: 8, dataAiHint: "professional indian man lawyer portrait" },
   { id: '3', name: 'Adv. Anjali Singh', specialization: 'Family Law', location: 'Bangalore, India', phone: '+91 87654 32109', email: 'anjali.singh@example.com', rating: 4.7, firm: "Singh & Partners", experience: 10, dataAiHint: "elegant indian female attorney" },
   { id: '4', name: 'Adv. Vikram Rao', specialization: 'Property Law', location: 'Chennai, India', phone: '+91 70123 45678', email: 'vikram.rao@example.com', rating: 4.6, firm: "Rao Property Chambers", experience: 15, dataAiHint: "experienced male lawyer india" },
   { id: '5', name: 'Adv. Sunita Reddy', specialization: 'Cyber Law', location: 'Hyderabad, India', phone: '+91 63098 76543', email: 'sunita.reddy@example.com', rating: 4.9, firm: "Reddy Tech Legal", experience: 7, dataAiHint: "modern indian woman tech lawyer" },
   { id: '6', name: 'Adv. Alok Verma', specialization: 'Civil Law', location: 'Kolkata, India', phone: '+91 88877 55544', email: 'alok.verma@example.com', rating: 4.3, firm: "Verma Civil Litigators", experience: 9, dataAiHint: "indian man lawyer in suit" },
-  // New Lawyers
   { id: '7', name: 'Adv. Sneha Das', specialization: 'Intellectual Property', location: 'Kolkata, India', phone: '+91 99887 76655', email: 'sneha.das@example.com', rating: 4.6, firm: "Das IP Experts", experience: 8, dataAiHint: "creative indian woman lawyer" },
   { id: '8', name: 'Adv. Arjun Kapoor', specialization: 'Tax Law', location: 'Mumbai, India', phone: '+91 77665 54433', email: 'arjun.kapoor@example.com', rating: 4.4, firm: "Kapoor Tax Advisors", experience: 11, dataAiHint: "sharp indian man tax lawyer" },
   { id: '9', name: 'Adv. Meera Iyer', specialization: 'Labor Law', location: 'Delhi, India', phone: '+91 66554 43322', email: 'meera.iyer@example.com', rating: 4.7, firm: "Iyer Employment Law", experience: 9, dataAiHint: "confident south indian woman lawyer" },
@@ -45,7 +44,53 @@ const allLawyers: Lawyer[] = [
   { id: '13', name: 'Adv. Fatima Khan', specialization: 'Family Law', location: 'Pune, India', phone: '+91 22110 09988', email: 'fatima.khan@example.com', rating: 4.9, firm: "Khan Family Advocates", experience: 7, dataAiHint: "empathetic indian woman family lawyer" },
 ];
 
-const legalSpecializations = [
+const citiesToPopulate = ["Mumbai", "Kolkata", "Delhi", "Pune", "Hyderabad", "Bangalore", "Chennai"];
+const specializationsToPopulate = [
+  "Civil Law", "Criminal Law", "Family Law", "Corporate Law", "Property Law", 
+  "Cyber Law", "Intellectual Property", "Tax Law", "Labor Law"
+];
+
+const maleFirstNames = ["Aarav", "Vivaan", "Aditya", "Vihaan", "Arjun", "Sai", "Reyansh", "Krishna", "Ishaan", "Aryan", "Rohan", "Vikram", "Alok", "Rahul", "Karan", "Sameer", "Mohan", "Dev", "Tarun", "Nikhil", "Amit", "Rajesh", "Sanjay", "Deepak", "Gaurav", "Manish", "Prakash", "Suresh", "Ramesh", "Vijay"];
+const femaleFirstNames = ["Saanvi", "Angel", "Pari", "Ananya", "Diya", "Pihu", "Aadhya", "Myra", "Navya", "Anika", "Priya", "Anjali", "Sunita", "Sneha", "Meera", "Fatima", "Isha", "Kavya", "Riya", "Shreya", "Pooja", "Neha", "Swati", "Preeti", "Monika", "Geeta", "Lakshmi", "Deepa", "Reena", "Usha"];
+const lastNames = ["Sharma", "Mehta", "Singh", "Rao", "Reddy", "Verma", "Das", "Kapoor", "Iyer", "Nair", "Joshi", "Khan", "Kumar", "Patel", "Gupta", "Shah", "Mishra", "Yadav", "Jain", "Agarwal", "Chavan", "Patil", "Kulkarni", "Desai", "Bose", "Menon", "Pillai", "Saxena", "Chopra", "Malhotra", "Ganguly", "Dubey", "Trivedi", "Pandey", "Chauhan"];
+const dataAiHintsCycle = ["professional lawyer portrait", "lawyer office setting", "attorney legal books", "indian advocate formal", "corporate lawyer meeting", "lawyer in discussion", "legal advisor"];
+
+const generatedLawyers: Lawyer[] = [];
+let currentId = 13; 
+let nameGenIndex = 0;
+
+citiesToPopulate.forEach(city => {
+  specializationsToPopulate.forEach(spec => {
+    for (let i = 0; i < 3; i++) {
+      currentId++;
+      const isMale = Math.random() < 0.55; // Slightly more male names for variety
+      const firstName = isMale ? maleFirstNames[nameGenIndex % maleFirstNames.length] : femaleFirstNames[nameGenIndex % femaleFirstNames.length];
+      const lastName = lastNames[nameGenIndex % lastNames.length];
+      nameGenIndex++;
+
+      const lawyerName = `Adv. ${firstName} ${lastName}`;
+      const email = `${firstName.toLowerCase().replace(/\s+/g, '')}.${lastName.toLowerCase().replace(/\s+/g, '')}${currentId}@example.com`;
+
+      generatedLawyers.push({
+        id: String(currentId),
+        name: lawyerName,
+        specialization: spec,
+        location: `${city}, India`,
+        phone: `+91 9${String(Math.floor(Math.random() * 100000000)).padStart(9, '0')}`,
+        email: email,
+        imageUrl: 'https://placehold.co/120x120.png', // Blank image placeholder
+        rating: parseFloat((Math.random() * 1.4 + 3.5).toFixed(1)), 
+        firm: `${lastName} & Partners`,
+        experience: Math.floor(Math.random() * 18) + 3, 
+        dataAiHint: dataAiHintsCycle[currentId % dataAiHintsCycle.length]
+      });
+    }
+  });
+});
+
+const allLawyers: Lawyer[] = [...existingLawyers, ...generatedLawyers];
+
+const legalSpecializations = [ // This is used for the dropdown, keep it consistent
   "Civil Law", "Criminal Law", "Family Law", "Corporate Law", "Property Law", "Cyber Law", "Intellectual Property", "Tax Law", "Labor Law"
 ];
 
@@ -67,11 +112,15 @@ export default function LawyerLocatorPage() {
     setFoundLawyers(null);
 
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Reduced delay
+    await new Promise(resolve => setTimeout(resolve, 750)); 
 
     let results = allLawyers;
     if (location.trim()) {
-      results = results.filter(lawyer => lawyer.location.toLowerCase().includes(location.toLowerCase()));
+      constsearchTerm = location.toLowerCase();
+      results = results.filter(lawyer => 
+        lawyer.location.toLowerCase().includes(searchTerm) || 
+        lawyer.name.toLowerCase().includes(searchTerm) // Allow searching by name too
+      );
     }
     if (specialization) {
       results = results.filter(lawyer => lawyer.specialization === specialization);
@@ -103,15 +152,15 @@ export default function LawyerLocatorPage() {
               Find a Lawyer
             </CardTitle>
             <CardDescription>
-              Enter your location and select the area of law you need assistance with.
+              Enter your location (City or Pincode) or lawyer's name, and/or select the area of law.
             </CardDescription>
           </CardHeader>
           <CardContent className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="location">Location (City/Pincode)</Label>
+              <Label htmlFor="location">Location / Name</Label>
               <Input 
                 id="location" 
-                placeholder="e.g., Mumbai or 400001" 
+                placeholder="e.g., Mumbai, Adv. Sharma, or 400001" 
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
               />
@@ -161,7 +210,7 @@ export default function LawyerLocatorPage() {
                          height={96}
                          layout="fill"
                          objectFit="cover"
-                         fallbackSrc={lawyer.imageUrl || `https://placehold.co/120x120.png`}
+                         fallbackSrc={lawyer.imageUrl || `https://placehold.co/120x120.png`} // Ensure fallback
                        />
                     </div>
                     <div className="flex-1">
@@ -216,4 +265,3 @@ export default function LawyerLocatorPage() {
     </div>
   );
 }
-
