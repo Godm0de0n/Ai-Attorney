@@ -1,5 +1,3 @@
-# Firebase Studio
-
 ## 📚 College Project by Abhisek Nag & Team
 
 **AI-Attorney** is a full-stack web application built using the **Next.js** framework and integrated with **Firebase services**. This project was developed as part of our college coursework, led by **Abhisek Nag** along with a dedicated team of **9 classmates**. It serves as a starting point for scalable web applications that incorporate AI-powered features, legal tech tools, and Firebase backend services.
