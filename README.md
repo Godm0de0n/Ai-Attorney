@@ -75,8 +75,8 @@ Ensure you have the following installed:
     **Clone the repository**
 
    ```bash
-   git clone https://github.com/your-username/firebase-studio.git
-   cd firebase-studio
+   git clone https://github.com/Godm0de0n/Ai-Attorney.git
+   cd Ai-Attorney
 
 Using npm:
 
