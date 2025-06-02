@@ -77,7 +77,7 @@ Ensure you have the following installed:
    ```bash
    git clone https://github.com/Godm0de0n/Ai-Attorney.git
    cd Ai-Attorney
-
+   ```
 Using npm:
 
 ```bash
