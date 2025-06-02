@@ -129,7 +129,6 @@ We worked together on:
 - Backend and Firestore setup  
 - Legal tool components and logic
 
-*(You can list individual names here if you'd like to showcase your teammates)*
 
 ---
 
